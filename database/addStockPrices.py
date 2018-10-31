@@ -36,7 +36,7 @@ def addStock(dbConn, dbCurs, investmentTypeId, stockTicker):
     checkStockPrice = "INSERT INTO investments (investment_title, investment_type_id, investment_abbreviation, date_added, date_updated)"
     checkStockPrice += " VALUES (?, ?, ?, ?, ?)"
     now = datetime.now()
-    dbCurs.execute(checkStockPrice, (stockTicker, dayOfPrice, stockTicker, now, now))
+    dbCurs.execute(checkStockPrice, (stockTicker, investmentTypeId, stockTicker, now, now))
     dbConn.commit()
     
 def getInvestmentId(dbCurs, stockTicker):
@@ -71,7 +71,7 @@ def addStockPricesFromFile(dbConn, dbCurs, investmentId, stockPricesCSV):
     with open(stockPricesCSV, newline='') as csvFile:
         stockPriceReader = csv.reader(csvFile, delimiter=',', quotechar='"')
         for currentRow in stockPriceReader:
-            if currentRow[0] != 'Date':
+            if currentRow[0] != 'Date' and currentRow[0] != '':
                 (dayOfPrice, openPrice, highPrice, lowPrice, closePrice, adjClosePrice, volume) = currentRow
                 addStockPrice(dbConn, dbCurs, investmentId, dayOfPrice, openPrice, highPrice, lowPrice, closePrice, adjClosePrice, volume)
 
