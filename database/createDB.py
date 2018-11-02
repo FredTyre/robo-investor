@@ -66,4 +66,18 @@ stockPriceDiffsCreateSQL += ')'
 dbCurs.execute(stockPriceDiffsCreateSQL)
 dbConn.commit()
 
+stockPriceDiffPercsCreateSQL = 'CREATE TABLE stock_price_diff_percs '
+stockPriceDiffPercsCreateSQL += '( "investment_id" INTEGER NOT NULL'
+stockPriceDiffPercsCreateSQL += ', "day_of_price" date NOT NULL'
+stockPriceDiffPercsCreateSQL += ', "open_price_diff_perc" REAL'
+stockPriceDiffPercsCreateSQL += ', "high_price_diff_perc" REAL'
+stockPriceDiffPercsCreateSQL += ', "low_price_diff_perc" REAL'
+stockPriceDiffPercsCreateSQL += ', "close_price_diff_perc" REAL'
+stockPriceDiffPercsCreateSQL += ', "adj_close_price_diff_perc" REAL'
+stockPriceDiffPercsCreateSQL += ', "volume_diff_perc" REAL'
+stockPriceDiffPercsCreateSQL += ', PRIMARY KEY(`investment_id`,`day_of_price`)'
+stockPriceDiffPercsCreateSQL += ')'
+dbCurs.execute(stockPriceDiffPercsCreateSQL)
+dbConn.commit()
+
 dbConn.close()

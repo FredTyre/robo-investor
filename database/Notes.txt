@@ -10,7 +10,7 @@ SELECT investment_abbreviation,
 	   volume
 FROM investments, stock_prices
 WHERE investments.investment_id = stock_prices.investment_id
-  AND investments.investment_abbreviation = 'BLOK'
+  AND investments.investment_abbreviation = 'AAPL'
 ORDER BY day_of_price
 
 -- SQL to get all the price differences (daily up / down) for a stock from the database
@@ -25,7 +25,22 @@ SELECT investment_abbreviation,
 	   volume_diff
 FROM investments, stock_price_diffs
 WHERE investments.investment_id = stock_price_diffs.investment_id
-  AND investments.investment_abbreviation = 'BLOK'
+  AND investments.investment_abbreviation = 'AAPL'
+ORDER BY day_of_price
+
+-- SQL to get all the price difference %s (daily % up / % down) for a stock from the database
+SELECT investment_abbreviation, 
+       investment_title, 
+	   day_of_price, 
+	   open_price_diff_perc,
+	   high_price_diff_perc,
+	   low_price_diff_perc,
+	   close_price_diff_perc,
+	   adj_close_price_diff_perc,
+	   volume_diff_perc
+FROM investments, stock_price_diff_percs
+WHERE investments.investment_id = stock_price_diff_percs.investment_id
+  AND investments.investment_abbreviation = 'AAPL'
 ORDER BY day_of_price
 
 -- SQL to get all the prices and price differences (daily up / down) for a stock from the database
@@ -49,5 +64,38 @@ WHERE investments.investment_id = stock_prices.investment_id
   AND investments.investment_id = stock_price_diffs.investment_id
   AND stock_prices.investment_id = stock_price_diffs.investment_id
   AND stock_prices.day_of_price = stock_price_diffs.day_of_price
-  AND investments.investment_abbreviation = 'BLOK'
+  AND investments.investment_abbreviation = 'AAPL'
+ORDER BY stock_prices.day_of_price
+
+-- SQL to get all the prices, price differences (daily up / down), and price difference %s (daily % up / % down) for a stock from the database
+SELECT investment_abbreviation, 
+       investment_title, 
+	   stock_prices.day_of_price, 
+	   open_price,
+	   open_price_diff,
+	   open_price_diff_perc,
+	   high_price,
+	   high_price_diff,
+	   high_price_diff_perc,
+	   low_price,
+	   low_price_diff,
+	   low_price_diff_perc,
+	   close_price,
+	   close_price_diff,
+	   close_price_diff_perc,
+	   adjusted_close_price,
+	   adj_close_price_diff,
+	   adj_close_price_diff_perc,
+	   volume,
+	   volume_diff, 
+	   volume_diff_perc
+FROM investments, stock_prices, stock_price_diffs, stock_price_diff_percs
+WHERE investments.investment_id = stock_prices.investment_id
+  AND investments.investment_id = stock_price_diffs.investment_id
+  AND investments.investment_id = stock_price_diff_percs.investment_id
+  AND stock_prices.investment_id = stock_price_diffs.investment_id
+  AND stock_prices.investment_id = stock_price_diff_percs.investment_id
+  AND stock_prices.day_of_price = stock_price_diffs.day_of_price
+  AND stock_prices.day_of_price = stock_price_diff_percs.day_of_price
+  AND investments.investment_abbreviation = 'AAPL'
 ORDER BY stock_prices.day_of_price
