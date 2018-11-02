@@ -1,0 +1,53 @@
+-- SQL to get all the prices for a stock from the database
+SELECT investment_abbreviation, 
+       investment_title, 
+	   day_of_price, 
+	   open_price,
+	   high_price,
+	   low_price,
+	   close_price,
+	   adjusted_close_price,
+	   volume
+FROM investments, stock_prices
+WHERE investments.investment_id = stock_prices.investment_id
+  AND investments.investment_abbreviation = 'BLOK'
+ORDER BY day_of_price
+
+-- SQL to get all the price differences (daily up / down) for a stock from the database
+SELECT investment_abbreviation, 
+       investment_title, 
+	   day_of_price, 
+	   open_price_diff,
+	   high_price_diff,
+	   low_price_diff,
+	   close_price_diff,
+	   adj_close_price_diff,
+	   volume_diff
+FROM investments, stock_price_diffs
+WHERE investments.investment_id = stock_price_diffs.investment_id
+  AND investments.investment_abbreviation = 'BLOK'
+ORDER BY day_of_price
+
+-- SQL to get all the prices and price differences (daily up / down) for a stock from the database
+SELECT investment_abbreviation, 
+       investment_title, 
+	   stock_prices.day_of_price, 
+	   open_price,
+	   open_price_diff,
+	   high_price,
+	   high_price_diff,
+	   low_price,
+	   low_price_diff,
+	   close_price,
+	   close_price_diff,
+	   adjusted_close_price,
+	   adj_close_price_diff,
+	   volume,
+	   volume_diff
+FROM investments, stock_prices, stock_price_diffs
+WHERE investments.investment_id = stock_prices.investment_id
+  AND investments.investment_id = stock_price_diffs.investment_id
+  AND stock_prices.investment_id = stock_price_diffs.investment_id
+  AND stock_prices.day_of_price = stock_price_diffs.day_of_price
+  AND investments.investment_abbreviation = 'BLOK'
+ORDER BY stock_prices.day_of_price
