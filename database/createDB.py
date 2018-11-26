@@ -1,3 +1,10 @@
+#########################################################################################
+# Author : Fred Tyre (aka One5hot76)                                                    #
+# See main folder for LICENSE and README files related to this open source project      #
+# Gentle reminder to use at your own risk! Absolutely no warranty is implied with       #
+# this product as stated in Readme file in main folder.                                 #
+#########################################################################################
+
 import sqlite3
 from datetime import datetime
 
@@ -78,6 +85,72 @@ stockPriceDiffPercsCreateSQL += ', "volume_diff_perc" REAL'
 stockPriceDiffPercsCreateSQL += ', PRIMARY KEY(`investment_id`,`day_of_price`)'
 stockPriceDiffPercsCreateSQL += ')'
 dbCurs.execute(stockPriceDiffPercsCreateSQL)
+dbConn.commit()
+
+stockPricesWeeklyCreateSQL = 'CREATE TABLE stock_prices_weekly '
+stockPricesWeeklyCreateSQL += '( "investment_id" INTEGER NOT NULL'
+stockPricesWeeklyCreateSQL += ', "start_day_of_week" date NOT NULL'
+stockPricesWeeklyCreateSQL += ', "end_day_of_week" date NOT NULL'
+stockPricesWeeklyCreateSQL += ', "open_price" REAL'
+stockPricesWeeklyCreateSQL += ', "high_price" REAL'
+stockPricesWeeklyCreateSQL += ', "low_price" REAL'
+stockPricesWeeklyCreateSQL += ', "close_price" REAL'
+stockPricesWeeklyCreateSQL += ', "volume" INTEGER'
+stockPricesWeeklyCreateSQL += ', "num_trading_days" INTEGER'
+stockPricesWeeklyCreateSQL += ', PRIMARY KEY(`investment_id`,`start_day_of_week`)'
+stockPricesWeeklyCreateSQL += ')'
+dbCurs.execute(stockPricesWeeklyCreateSQL)
+dbConn.commit()
+
+stockPricesMonthlyCreateSQL = 'CREATE TABLE stock_prices_monthly '
+stockPricesMonthlyCreateSQL += '( "investment_id" INTEGER NOT NULL'
+stockPricesMonthlyCreateSQL += ', "month" date NOT NULL'
+stockPricesMonthlyCreateSQL += ', "open_price" REAL'
+stockPricesMonthlyCreateSQL += ', "high_price" REAL'
+stockPricesMonthlyCreateSQL += ', "low_price" REAL'
+stockPricesMonthlyCreateSQL += ', "close_price" REAL'
+stockPricesMonthlyCreateSQL += ', "volume" INTEGER'
+stockPricesMonthlyCreateSQL += ', "num_trading_days" INTEGER'
+stockPricesMonthlyCreateSQL += ', PRIMARY KEY(`investment_id`,`month`)'
+stockPricesMonthlyCreateSQL += ')'
+dbCurs.execute(stockPricesMonthlyCreateSQL)
+dbConn.commit()
+
+stockPricesYearlyCreateSQL = 'CREATE TABLE stock_prices_yearly '
+stockPricesYearlyCreateSQL += '( "investment_id" INTEGER NOT NULL'
+stockPricesYearlyCreateSQL += ', "year" INTEGER NOT NULL'
+stockPricesYearlyCreateSQL += ', "open_price" REAL'
+stockPricesYearlyCreateSQL += ', "high_price" REAL'
+stockPricesYearlyCreateSQL += ', "low_price" REAL'
+stockPricesYearlyCreateSQL += ', "close_price" REAL'
+stockPricesYearlyCreateSQL += ', "volume" INTEGER'
+stockPricesYearlyCreateSQL += ', "num_trading_days" INTEGER'
+stockPricesYearlyCreateSQL += ', PRIMARY KEY(`investment_id`,`year`)'
+stockPricesYearlyCreateSQL += ')'
+dbCurs.execute(stockPricesYearlyCreateSQL)
+dbConn.commit()
+
+investmentSimCreateSQL = 'CREATE TABLE investment_simulations '
+investmentSimCreateSQL += '( "investment_sim_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'
+investmentSimCreateSQL += ', "investment_sim_title" TEXT NOT NULL'
+investmentSimCreateSQL += ', "start_date" date NOT NULL'
+investmentSimCreateSQL += ', "end_date" date NOT NULL'
+investmentSimCreateSQL += ', "commission_fee" REAL'
+investmentSimCreateSQL += ')'
+dbCurs.execute(investmentSimCreateSQL)
+dbConn.commit()
+
+investSimStockTransacsCreateSQL = 'CREATE TABLE invest_sim_stock_transactions '
+investSimStockTransacsCreateSQL += '( "investment_sim_id" INTEGER NOT NULL'
+investSimStockTransacsCreateSQL += ', "investment_id" INTEGER NOT NULL'
+investSimStockTransacsCreateSQL += ', "day_of_price" date NOT NULL'
+investSimStockTransacsCreateSQL += ', "buy_or_sell" TEXT NOT NULL'
+investSimStockTransacsCreateSQL += ', "num_shares" INTEGER'
+investSimStockTransacsCreateSQL += ', "transaction_price" REAL'
+investSimStockTransacsCreateSQL += ', "commission_fee" REAL'
+investSimStockTransacsCreateSQL += ', PRIMARY KEY(`investment_id`,`day_of_price`, `buy_or_sell`)'
+investSimStockTransacsCreateSQL += ')'
+dbCurs.execute(investSimStockTransacsCreateSQL)
 dbConn.commit()
 
 dbConn.close()

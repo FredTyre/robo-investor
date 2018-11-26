@@ -1,6 +1,13 @@
+#########################################################################################
+# Author : Fred Tyre (aka One5hot76)                                                    #
+# See main folder for LICENSE and README files related to this open source project      #
+# Gentle reminder to use at your own risk! Absolutely no warranty is implied with       #
+# this product as stated in Readme file in main folder.                                 #
+#########################################################################################
+
 import sys
-import sqlite3
 import csv
+import sqlite3
 
 from os import listdir
 from os.path import isfile, join
@@ -10,9 +17,10 @@ def getStockTickersFromPriceFolder(stockPricesFolder):
     stockTickers = []
     filesInPriceFolder = [file for file in listdir(stockPricesFolder) if isfile(join(stockPricesFolder, file))]
     for currFile in filesInPriceFolder:
-        tempFilename = currFile.replace(".csv", "")
-        tempFilename = tempFilename.replace(".CSV", "")
-        stockTickers.append(tempFilename)
+        if currFile.endswith(".csv") or currFile.endswith(".CSV"):
+            tempFilename = currFile.replace(".csv", "")
+            tempFilename = tempFilename.replace(".CSV", "")
+            stockTickers.append(tempFilename)
 
     return stockTickers
 
@@ -39,7 +47,7 @@ def addStock(dbConn, dbCurs, investmentTypeId, stockTicker):
     dbCurs.execute(checkStockPrice, (stockTicker, investmentTypeId, stockTicker, now, now))
     dbConn.commit()
     
-def getInvestmentId(dbCurs, stockTicker):
+def getInvestmentId(dbConn, dbCurs, stockTicker):
     investmentId = -999
     if not stockInDB(dbCurs, stockTicker):
         investmentTypeId = getInvestmentTypeId(dbCurs, "Stocks")
@@ -74,7 +82,15 @@ def stockPriceDiffPercInDB(dbCurs, investmentId, dayOfPrice):
     if currentRows[0][0] > 0:
         return True
     return False
-    
+
+def investmentSimulationInDB(dbCurs, investSimTitle):
+    checkInvestSim = "SELECT COUNT(*) FROM investment_simulations WHERE investment_sim_title = ?"
+    dbCurs.execute(checkInvestSim, ([investSimTitle]))
+    currentRows = dbCurs.fetchall()
+    if currentRows[0][0] > 0:
+        return True
+    return False
+        
 def addStockPrice(dbConn, dbCurs, investmentId, dayOfPrice, openPrice, highPrice, lowPrice, closePrice, adjClosePrice, volume):
     if stockPriceInDB(dbCurs, investmentId, dayOfPrice):
         return
@@ -108,11 +124,31 @@ def addStockPricesFromFile(dbConn, dbCurs, investmentId, stockPricesCSV):
                 addStockPrice(dbConn, dbCurs, investmentId, dayOfPrice, openPrice, highPrice, lowPrice, closePrice, adjClosePrice, volume)
     genStockPriceDifferences(dbConn, dbCurs, investmentId)
 
+def addInvestmentSimulation(dbConn, dbCurs, investSimTitle, startDate, endDate, commissionFee):
+    if investmentSimulationInDB(dbCurs, investSimTitle):
+        return getInvestmentSimId(dbConn, dbCurs, investSimTitle)
+    
+    addInvestSimulation = "INSERT INTO investment_simulations (investment_sim_title, start_date, end_date, commission_fee)"
+    addInvestSimulation += " VALUES ('%s', ?, ?, ?)" % (investSimTitle)
+    dbCurs.execute(addInvestSimulation, (startDate, endDate, commissionFee))
+    dbConn.commit()
+    
+    return getInvestmentSimId(dbConn, dbCurs, investSimTitle)
+    
 def getStockPricesFromDB(dbConn, dbCurs, investmentId):
     getStockPrices = "SELECT * FROM stock_prices WHERE investment_id = ? ORDER BY day_of_price"
     dbCurs.execute(getStockPrices, [investmentId])
     stockPrices = dbCurs.fetchall()
     return stockPrices
+
+def getInvestmentSimId(dbConn, dbCurs, investSimTitle):
+    investmentSimId = -999
+    getInvestmentSimIdSQL = "SELECT investment_sim_id FROM investment_simulations WHERE investment_sim_title = ?"
+    dbCurs.execute(getInvestmentSimIdSQL, [investSimTitle])
+    currentRows = dbCurs.fetchall()
+    investmentSimId = currentRows[0][0]
+    
+    return investmentSimId
 
 def genStockPriceDifferences(dbConn, dbCurs, investmentId):
     stockPriceDiffs = []
@@ -193,7 +229,8 @@ def genStockPriceDifferences(dbConn, dbCurs, investmentId):
         (dayOfPrice, openPriceDiffPerc, highPriceDiffPerc, lowPriceDiffPerc, closePriceDiffPerc, adjClosePriceDiffPerc, volumeDiffPerc) = currStockPriceDiffPerc
         addStockPriceDiffPerc(dbConn, dbCurs, investmentId, dayOfPrice, openPriceDiffPerc, highPriceDiffPerc, lowPriceDiffPerc, closePriceDiffPerc, adjClosePriceDiffPerc, volumeDiffPerc)
     
-
+def simulateDailyPurchaseStock(dbConn, dbCurs, stockTicker, startDate, endDate):
+    return True
 
 
 
